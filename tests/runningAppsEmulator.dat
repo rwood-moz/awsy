@@ -1,0 +1,136 @@
+keydown 102
+sleep 200
+keyup 102
+sleep 1000
+drag 300 175 90 175 25 100
+sleep 2000
+tap 130 50 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 210 50 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 1000
+sleep 3000
+tap 300 50 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 50 150 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 1000
+tap 130 150 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 210 150 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 300 150 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 50 250 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 130 250 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 210 250 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 300 250 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 50 350 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 130 350 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 210 350 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+drag 300 175 90 175 25 100
+sleep 1000
+sleep 2000
+tap 50 50 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 130 50 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 210 50 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 300 50 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+tap 50 150 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 1000
+tap 130 150 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 5000
+tap 210 150 1 20 
+sleep 10000
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
