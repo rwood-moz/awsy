@@ -57,12 +57,12 @@ class AWSY(object):
 
     def start_emu(self):
         # Startup the B2G emulator; location specified by $B2G_HOME
-        print "\nStarting the B2G emulator..."
+        print "\nStarting the B2G emulator and sleeping for a couple of minutes..."
         # Want emulator to start in own process but don't want this parent to wait for it to finish
         os.system("gnome-terminal -e $B2G_HOME/run-emulator.sh")
         # Sleep for emulator bootup
         # <TODO> Use adb wait for device instead of a static sleep??
-        time.sleep(120)
+        time.sleep(150)
 
         # Verify emulator is running
         returned = os.popen("ps -Af").read()
@@ -109,6 +109,10 @@ class AWSY(object):
 
     def get_memory_report(self, dmd):
         # Use the get_about_memory script to grab a memory report
+
+        # TEMP due to Bug 910847 DO NOT attempt to get DMD
+        dmd = False
+
         if dmd:
             print "\nGetting about_memory report with DMD enabled..."
             return_code = subprocess.call(["$B2G_HOME/get_about_memory.py"], shell=True)
@@ -133,8 +137,13 @@ class AWSY(object):
             self.run_test(orangutan_test, cur_iteration, iterations)
             print "\nIteration complete, sleeping for %d seconds..." %sleep
             time.sleep(sleep)
-            # TODO: CHeck for nap
-            # TODO: Check for checkpoint
+            # Checkpoint time?
+            if ((cur_iteration % checkpoint_at) == 0) or cur_iteration == iterations:
+                self.get_memory_report(dmd)
+            # Nap time?
+            if (cur_iteration % nap_every == 0):
+                print "\nTaking extended nap for %d seconds..." %nap_time
+                time.sleep(nap_time)
 
     def kill_emulator(self):
         # Tests are finished, kill the emulator
@@ -216,8 +225,12 @@ def cli():
     print "Test to run: %s" %test_name
     print "Iterations: %d" %options.iterations
     print "Sleep for %d seconds between iterations." %options.sleep_between
-    print "After every %d iterations take a nap for %d seconds." %(options.nap_after, options.nap_time)
-    print "Get additional about_memory dumps after every %d iterations." %options.checkpoint_every
+    if options.nap_after <= options.iterations:
+        print "After every %d iterations take a nap for %d seconds." %(options.nap_after, options.nap_time)
+    if options.checkpoint_every <= options.iterations:
+        print "Get extra about_memory dumps after every %d iterations." %options.checkpoint_every
+    else:
+        print "About_memory dumps will be retrieved at start and at the finish."
     if options.dmd:
         print "DMD will be included in the memory dumps."
     else:
@@ -228,15 +241,25 @@ def cli():
     print "\nStarting in 30 seconds..."
     time.sleep(30)
 
-    # Begin
+    # Begin by backuping up any existing about_memory reports
     awsy.backup_existing_reports()
+
+    # Start up the emulator
     awsy.start_emu()
+
+    # Copy orangutan binary onto emulator
     awsy.copy_file_onto_emu('orangutan/orng')
+
+    # Ensure no old memory reports exist on the emulator
     awsy.delete_old_reports_from_emu()
+
+    # Copy the orangutan test script onto the emulator
     awsy.copy_file_onto_emu(test_name)
+
+    # Get the starting about_memory
     awsy.get_memory_report(options.dmd)
 
-    # Actually run the test cycle(s)
+    # Actually run the test cycle(s), and get_about_memory
     awsy.drive(test_name,
                options.iterations,
                options.sleep_between,
@@ -245,9 +268,7 @@ def cli():
                options.checkpoint_every,
                options.dmd)
 
-    # Get the final memory report
-    awsy.get_memory_report(options.dmd)
-
+    # Kill the emulator instance
     awsy.kill_emulator()
     print "\nFinished."
 

@@ -12,9 +12,10 @@ The following will guide you through the AWSY installation (Ubuntu x64).
 
 It is assumed that you already have a B2G build environment setup, with a successful build of the B2G emulator already completed. Also within the standard B2G build folder is the B2G/tools folder, which contains the get_about_memory.py script.
 
-The following environment variable MUST be set and exported in order for AWSY to locate your emulator build and the about_memory script:
+The B2G_HOME environment variable MUST be set and exported in order for AWSY to locate your emulator build and the about_memory script:
 
-B2G_HOME = <path to your B2G build> i.e. /home/rwood/B2G
+        ie. B2G_HOME = /home/rwood/B2G
+        export B2G_HOME
 
 2) Orangutan:
 
@@ -22,9 +23,10 @@ Please see the instructions on building the Orangutan binary in the readme here:
 
         https://github.com/wlach/orangutan
 
-Once you have an orangutan binary, the following environment variable must be set and exported to in order for AWSY to lcoate your orangutan binary:
+Once you have an orangutan binary, the AWSY_ORANG environment variable must be set and exported to in order for AWSY to lcoate your orangutan binary:
 
-AWSY_ORANG = <path to your orangutan binary> i.e. /home/rwood/awsy/orangutan
+        ie. AWSY_ORANG = /home/rwood/awsy/orangutan
+        export AWSY_ORANG
 
 3) This test driver:
 
@@ -47,7 +49,7 @@ First ensure installation is complete and the B2G_HOME and AWSY_ORANG environmen
 
 Secondly, startup the emulator manually, and ensure the prerequistes are met as described above, and then SHUT DOWN the emulator before continuing. Ensure that no emulator instances are running before continuing.
 
-Note: Currently DMD processing of emulator DMD memeory dumps doesn't work (Bug 910847). Therefore by default DMD processing is currenlty turned OFF.
+Note: Currently DMD processing of emulator DMD memeory dumps doesn't work (Bug 910847). Therefore DMD processing will not be included (the command line option is temporarily over-ridden to ensure DMD is not included).
 
 Third, open a terminal and start the driver. For example, to run one iteration of the 'runningAppsEmulator' test, with DMD processing turned off, do the following:
 
@@ -58,7 +60,7 @@ For more information on the optional command line arguments:
 
         python awsy.py --help
 
-It currently takes a large amount of time for the get_about_memory tool to pull the GC/cc files off of the emulator; the driver may seem to get stuck at "Got N/N files." Since it takes so long, this has currently been disabled (using the --no-gc-cc-log option).
+It currently takes a large amount of time for the get_about_memory tool to pull the GC/cc files off of the emulator; the driver may seem to get stuck at "Got N/N files." Since it takes so long, this has currently been disabled (using the --no-gc-cc-log option). See Bug 897301.
 
 The resulting about-memory files will be found in the local folder where AWSY was cloned to.
 
