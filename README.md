@@ -32,15 +32,24 @@ Once you have an orangutan binary, the AWSY_ORANG environment variable must be s
 
         git clone https://github.com/rwood-moz/awsy.git
 
-B2G Emulator Prerequisites
-==========================
-Currently some manual setup of the B2G emulator is required, at least until these items are automated in the future, via prerences or build requirements. For now, in order for the AWSY emulator tests to run, the following B2G emulator items must be manually set:
+B2G Emulator Build Prerequisites
+================================
+In order for the orangutan test(s) to be able to run on the emulator:
+a) The FTU (first time user) app must not appear on first time startup; and
+b) The emulator screen cannot be locked (ie. the lock-screen option must be disabled)
 
-1) The FTU (First Time Use) application must NOT appear on emulator boot-up. Just run the emulator for the first time, and manually run through the FTU app so it doesn't appear on subsequent emulator start-ups.
+Both of these can be taken care of by changing some default settings before doing the emulator build.
 
-2) The FirefoxOS phone lock must be disabled so that the emulator/phone doesn't lock up during the sleeps between tests or when grabbing the memory information. Just go into the Settings app on the emulator and choose to disable the phone lock. Also, it is good to set the screen timeout to 'never' so that the screen display will not sleep/turn off.
+To turn off the FTU app in the build:
+a) Edit 'B2G/gaia/Makefile'
+b) Change the 'NOFTU?=0' (around line 60) to read 'NOFTU=1'
 
-3) Ensure that the volume warning has already been accepted. To do this, start the FM Radio app on the emulator; the first time this app appears there is a volume warning; click the 'continue' button and then after the radio app starts, just close the app.
+To ensure the lock-screen option is disabled:
+a) Edit 'B2G/gaia/build/settings.js'
+b) Set 'lockscreen.locked': false,
+c) Set 'lockscreen.enabled': false,
+
+Then build the emulator as usual.
 
 Running the Tests
 =================

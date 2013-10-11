@@ -25,11 +25,11 @@ class AWSY(object):
         # Ensure run-emulator script exist
         if not os.path.exists("%s/run-emulator.sh" %self.b2g_home):
             print("\nThe emulator doesn't exist at the $B2G_HOME location.\n")
-            exit(1)
+            sys.exit(1)
         # Ensure get_about_memory tool script exists
         if not os.path.exists("%s/tools/get_about_memory.py" %self.b2g_home):
             print("\nThe get_about_memory.py script doesn't exist in $B2G_HOME/tools.\n")
-            exit(1)
+            sys.exit(1)
         # Ensure $AWSY_ORANG is set
         try:
             self.awsy_orang = os.environ["AWSY_ORANG"]
@@ -40,7 +40,7 @@ class AWSY(object):
         # Ensure orang binary exists
         if not os.path.exists("%s/orng" %self.awsy_orang):
             print("\nThe orangutan binary doesn't exist at the $AWSY_ORANG location.\n")
-            exit(1)
+            sys.exit(1)
 
     def backup_existing_reports(self):
         # If any about-memory reports exist, back them up
@@ -57,12 +57,12 @@ class AWSY(object):
 
     def start_emu(self):
         # Startup the B2G emulator; location specified by $B2G_HOME
-        print "\nStarting the B2G emulator and sleeping for a couple of minutes..."
+        print "\nStarting the B2G emulator and sleeping for a minute..."
         # Want emulator to start in own process but don't want this parent to wait for it to finish
         os.system("gnome-terminal -e $B2G_HOME/run-emulator.sh")
         # Sleep for emulator bootup
         # <TODO> Use adb wait for device instead of a static sleep??
-        time.sleep(150)
+        time.sleep(60)
 
         # Verify emulator is running
         returned = os.popen("ps -Af").read()
@@ -88,7 +88,7 @@ class AWSY(object):
         # Ensure there are no memory reports on the emulator (/data/local/tmp) left from a previous run
         print "\nRemoving any previous memory reports from the emulator..."
         try:
-            subprocess.call(["rm -r /data/local/tmp/memory-reports"], shell=True)
+            subprocess.call(["adb shell rm -r /data/local/tmp/memory-reports"], shell=True)
         except:
             pass
 
@@ -158,7 +158,7 @@ class AWSY(object):
                     os.kill(emu_pid, 9)
         except:
             # Failed to kill emulator
-            print "\nCould'nt kill the emulator process."
+            print "\nCouldn't kill the emulator process."
 
 class awsyOptionParser(OptionParser):
     def __init__(self, **kwargs):
@@ -220,7 +220,7 @@ def cli():
     test_name = args[0]
     if not os.path.exists(test_name):
         print("Error: The specified test '%s' does not exist.\n" %test_name)
-        exit(1)
+        sys.exit(1)
 
     print "Test to run: %s" %test_name
     print "Iterations: %d" %options.iterations
@@ -238,8 +238,6 @@ def cli():
 
     # Create our test runner
     awsy = AWSY()
-    print "\nStarting in 30 seconds..."
-    time.sleep(30)
 
     # Begin by backuping up any existing about_memory reports
     awsy.backup_existing_reports()
