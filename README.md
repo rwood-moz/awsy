@@ -34,20 +34,23 @@ Once you have an orangutan binary, the AWSY_ORANG environment variable must be s
 
 B2G Emulator Build Prerequisites
 ================================
-In order for the orangutan test(s) to be able to run on the emulator:
-a) The FTU (first time user) app must not appear on first time startup; and
-b) The emulator screen cannot be locked (ie. the lock-screen option must be disabled)
+In order for the orangutan test(s) to be able to run on the emulator, the FTU (first time user) app must not appear on first time startup; and the emulator screen can never be locked.
 
-Both of these can be taken care of by changing some default settings before doing the emulator build.
+Both of these requirements can be taken care of by changing some default pre-build settings.
 
 To turn off the FTU app in the build:
-a) Edit 'B2G/gaia/Makefile'
-b) Change the 'NOFTU?=0' (around line 60) to read 'NOFTU=1'
+
+        Edit the 'B2G/gaia/Makefile'
+
+        Change the 'NOFTU?=0' (around line 60) to read 'NOFTU=1'
 
 To ensure the lock-screen option is disabled:
-a) Edit 'B2G/gaia/build/settings.js'
-b) Set 'lockscreen.locked': false,
-c) Set 'lockscreen.enabled': false,
+
+        Edit 'B2G/gaia/build/settings.js'
+
+        Set 'lockscreen.locked': false,
+
+        Set 'lockscreen.enabled': false,
 
 Then build the emulator as usual.
 
