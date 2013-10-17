@@ -57,12 +57,12 @@ class AWSY(object):
 
     def start_emu(self):
         # Startup the B2G emulator; location specified by $B2G_HOME
-        print "\nStarting the B2G emulator and sleeping for a minute..."
+        print "\nStarting emulator and sleeping a minute..."
         # Want emulator to start in own process but don't want this parent to wait for it to finish
         os.system("gnome-terminal -e $B2G_HOME/run-emulator.sh")
         # Sleep for emulator bootup
         # <TODO> Use adb wait for device instead of a static sleep??
-        time.sleep(60)
+        time.sleep(120)
 
         # Verify emulator is running
         returned = os.popen("ps -Af").read()
@@ -245,14 +245,22 @@ def cli():
     # Start up the emulator
     awsy.start_emu()
 
-    # Copy orangutan binary onto emulator
-    awsy.copy_file_onto_emu('orangutan/orng')
-
     # Ensure no old memory reports exist on the emulator
     awsy.delete_old_reports_from_emu()
 
+    # Copy orangutan binary onto emulator
+    awsy.copy_file_onto_emu('orangutan/orng')
+
+    # Copy the FTU utility script onto the emulator
+    awsy.copy_file_onto_emu('tests/navigateftu.dat')
+
     # Copy the orangutan test script onto the emulator
     awsy.copy_file_onto_emu(test_name)
+
+    # First time the emulator starts up there is the FTU app;
+    # run utility script to navigate and close the FTU
+    awsy.run_test('tests/navigateftu.dat', 1, 1)
+    time.sleep(5)
 
     # Get the starting about_memory
     awsy.get_memory_report(options.dmd)
