@@ -1,148 +1,593 @@
-# In case the screen has locked on us, unlock screen
-# Has no effect if the screen is currently unlocked
 # Home to wake up screen
 keydown 102
 sleep 200
 keyup 102
 sleep 5000
-# Drag to unlock
-drag 250 450 450 450 25 100
-sleep 5000
-# Go home and then swipe right
+# Go to main home screen
 keydown 102
 sleep 200
 keyup 102
 sleep 1000
+# Home again just to be sure are on main screen in case app was already running
+keydown 102
+sleep 200
+keyup 102
+sleep 1000
+# Start with main icons on bottom ribbon (phone, messages, contacts, browser)
+# Tap next app icon and wait a bit
+tap 50 450 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Tap next app icon and wait a bit
+tap 130 450 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Tap next app icon and wait a bit
+tap 210 450 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Tap next app icon and wait a bit
+tap 300 450 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
 drag 300 175 90 175 25 100
 sleep 2000
-# Now tap each icon; open app; then go back home; repeat
-tap 130 50 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-tap 210 50 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 1000
-sleep 3000
-tap 300 50 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-tap 50 150 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 1000
-tap 130 150 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-tap 210 150 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-tap 300 150 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-tap 50 250 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-tap 130 250 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-tap 210 250 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-tap 300 250 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-tap 50 350 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-tap 130 350 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-tap 210 350 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 3000
-drag 300 175 90 175 25 100
-sleep 1000
-sleep 2000
+# Tap first app to start it and wait a bit
 tap 50 50 1 20 
 sleep 10000
+# Press home to put app in background
 keydown 102
 sleep 200
 keyup 102
 sleep 3000
+# Home again to ensure we go back to main home screen
+# Start at main home screen each time; that way if an
+# app crashes we always have a central starting point
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
 tap 130 50 1 20 
 sleep 10000
+# Press home to put app in background
 keydown 102
 sleep 200
 keyup 102
 sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
 tap 210 50 1 20 
 sleep 10000
+# Press home to put app in background
 keydown 102
 sleep 200
 keyup 102
 sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
 tap 300 50 1 20 
 sleep 10000
+# Press home to put app in background
 keydown 102
 sleep 200
 keyup 102
 sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
 tap 50 150 1 20 
 sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 1000
-tap 130 150 1 20 
-sleep 10000
-keydown 102
-sleep 200
-keyup 102
-sleep 5000
-tap 210 150 1 20 
-sleep 10000
+# Press home to put app in background
 keydown 102
 sleep 200
 keyup 102
 sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 130 150 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 210 150 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 300 150 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 50 250 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 130 250 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 210 250 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 300 250 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 50 350 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 130 350 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 210 350 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 300 350 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 50 50 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 130 50 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 210 50 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 300 50 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 50 150 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 130 150 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 210 150 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 300 150 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 50 250 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 130 250 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 210 250 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 300 250 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 50 350 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Swipe right to get to first screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Swipe right again to get to second screen of apps
+drag 300 175 90 175 25 100
+sleep 2000
+# Tap next app icon and wait a bit
+tap 130 350 1 20 
+sleep 10000
+# Press home to put app in background
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# Home again to ensure back at main screen again
+keydown 102
+sleep 200
+keyup 102
+sleep 3000
+# End of test
