@@ -13,6 +13,7 @@ from optparse import OptionParser
 class AWSY(object):
 
     emu_proc = 'emulator64-arm'
+    emu_proc2 = 'emulator-arm'
 
     def __init__(self):
         # Ensure $B2G_HOME is set
@@ -74,8 +75,10 @@ class AWSY(object):
         returned = os.popen("ps -Af").read()
         found = returned.count(self.emu_proc)
         if found == 0:
-            print("\nThe B2G emulator failed to start; process not found.")
-            sys.exit(1)
+            found = returned.count(self.emu_proc2)
+            if found == 0:
+                print("\nThe B2G emulator failed to start; process not found.")
+                sys.exit(1)
 
         # ADB forward to the emulator
         return_code = subprocess.call(["adb forward tcp:2828 tcp:2828"], shell=True)
@@ -159,6 +162,10 @@ class AWSY(object):
             process_list = returned.split("\n")
             for i, s in enumerate(process_list):
                 if self.emu_proc in s:
+                    proc_details = process_list[i].split()
+                    emu_pid = int(proc_details[1])
+                    os.kill(emu_pid, 9)
+                elif self.emu_proc2 in s:
                     proc_details = process_list[i].split()
                     emu_pid = int(proc_details[1])
                     os.kill(emu_pid, 9)
