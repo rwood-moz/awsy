@@ -10,12 +10,17 @@ The following will guide you through the AWSY installation (Ubuntu x64).
 
 1) B2G Emulator and Tools:
 
-It is assumed that you already have a B2G build environment setup, with a successful build of the B2G emulator already completed. Also within the standard B2G build folder is the B2G/tools folder, which contains the get_about_memory.py script.
+It is assumed that you already have a B2G build environment setup, with a successful build of the B2G emulator already available. Also within the standard B2G build folder is the B2G/tools folder, which contains the get_about_memory.py script.
 
-The B2G_HOME environment variable MUST be set and exported in order for AWSY to locate your emulator build and the about_memory script:
+The B2G_HOME environment variable MUST be set and exported in order for AWSY to locate the about_memory script:
 
         ie. B2G_HOME = /home/rwood/B2G
         export B2G_HOME
+
+The B2G_DISTRO environment variable MUST be set and exported in order for AWSY to locate the emulator (the emulator may be downloaded and not in B2G_HOME):
+
+        ie. B2G_DISTRO = /home/rwood/b2g-distro
+        export B2G_DISTRO
 
 2) Orangutan:
 

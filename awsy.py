@@ -20,11 +20,7 @@ class AWSY(object):
             self.b2g_home = os.environ["B2G_HOME"]
             print "\n$B2G_HOME points to: %s" %self.b2g_home
         except:
-            print "\n$B2G_HOME env var must be set to point to the B2G emulator.\n"
-            sys.exit(1)
-        # Ensure run-emulator script exist
-        if not os.path.exists("%s/run-emulator.sh" %self.b2g_home):
-            print("\nThe emulator doesn't exist at the $B2G_HOME location.\n")
+            print "\n$B2G_HOME env var must be set to point to the B2G folder.\n"
             sys.exit(1)
         # Ensure get_about_memory tool script exists
         if not os.path.exists("%s/tools/get_about_memory.py" %self.b2g_home):
@@ -41,10 +37,20 @@ class AWSY(object):
         if not os.path.exists("%s/orng" %self.awsy_orang):
             print("\nThe orangutan binary doesn't exist at the $AWSY_ORANG location.\n")
             sys.exit(1)
+        # Ensure $B2G_DISTRO is set
+        try:
+            self.b2g_distro = os.environ["B2G_DISTRO"]
+            print "\n$B2G_DISTRO points to: %s" %self.b2g_distro
+        except:
+            print "\n$B2G_DISTRO env var must be set to point to the emulator.\n"
+            sys.exit(1)
+        # Ensure run-emulator script exist
+        if not os.path.exists("%s/run-emulator.sh" %self.b2g_distro):
+            print("\nThe emulator doesn't exist at the $B2G_DISTRO location.\n")
+            sys.exit(1)            
 
     def backup_existing_reports(self):
         # If any about-memory reports exist, back them up
-        #file_path = "./" %self.b2g_home
         print "\nBacking up any existing memory reports in %s" %os.getcwd()
         entire_file_list = os.listdir(os.getcwd())
         for found_file in entire_file_list:
@@ -56,10 +62,10 @@ class AWSY(object):
                     print "Unable to rename existing memory report: %s" %found_file    
 
     def start_emu(self):
-        # Startup the B2G emulator; location specified by $B2G_HOME
+        # Startup the B2G emulator; location specified by $B2G_DISTRO
         print "\nStarting emulator and sleeping a minute..."
         # Want emulator to start in own process but don't want this parent to wait for it to finish
-        os.system("gnome-terminal -e $B2G_HOME/run-emulator.sh")
+        os.system("gnome-terminal -e $B2G_DISTRO/run-emulator.sh")
         # Sleep for emulator bootup
         # <TODO> Use adb wait for device instead of a static sleep??
         time.sleep(120)
