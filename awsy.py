@@ -139,12 +139,15 @@ class AWSY(object):
         if return_code:
             print "\nFailed to run the orangutan test."
             sys.exit(1)
+        # Have output printed live in jenkins
+        sys.stdout.flush()
 
     def drive(self, orangutan_test, iterations, sleep, nap_every, nap_time, checkpoint_at, dmd):
         # Actually drive the tests
         for cur_iteration in range(1, iterations + 1):
             self.run_test(orangutan_test, cur_iteration, iterations)
             print "\nIteration complete, sleeping for %d seconds..." %sleep
+            sys.stdout.flush()
             time.sleep(sleep)
             # Checkpoint time?
             if ((cur_iteration % checkpoint_at) == 0) or cur_iteration == iterations:
@@ -152,6 +155,7 @@ class AWSY(object):
             # Nap time?
             if (cur_iteration % nap_every == 0):
                 print "\nTaking extended nap for %d seconds..." %nap_time
+                sys.stdout.flush()
                 time.sleep(nap_time)
 
     def kill_emulator(self):
