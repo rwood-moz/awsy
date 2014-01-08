@@ -48,7 +48,9 @@ class AWSY(object):
         # Ensure run-emulator script exist
         if not os.path.exists("%s/run-emulator.sh" %self.b2g_distro):
             print("\nThe emulator doesn't exist at the $B2G_DISTRO location.\n")
-            sys.exit(1)            
+            sys.exit(1)
+        # Have output printed live in jenkins
+        sys.stdout.flush()
 
     def backup_existing_reports(self):
         # If any about-memory reports exist, back them up
@@ -60,15 +62,21 @@ class AWSY(object):
                     cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
                     os.rename(found_file, "old_%s_%s" %(cur_time, found_file))
                 except:
-                    print "Unable to rename existing memory report: %s" %found_file    
+                    print "Unable to rename existing memory report: %s" %found_file
+        sys.stdout.flush()
 
     def start_emu(self):
         # Startup the B2G emulator; location specified by $B2G_DISTRO
-        print "\nStarting emulator and sleeping a minute..."
+        print "\nStarting emulator..."
+        sys.stdout.flush()
         # Want emulator to start in own process but don't want this parent to wait for it to finish
         os.system("gnome-terminal -e $B2G_DISTRO/run-emulator.sh")
         # Sleep for emulator bootup
         # <TODO> Use adb wait for device instead of a static sleep??
+        sys.stdout.flush()
+        os.system("adb wait-for-device")
+        print "\nSleeping a couple of minutes, to allow full emulator boot-up..."
+        sys.stdout.flush()
         time.sleep(120)
 
         # Verify emulator is running
@@ -78,12 +86,14 @@ class AWSY(object):
             found = returned.count(self.emu_proc2)
             if found == 0:
                 print("\nThe B2G emulator failed to start; process not found.")
+                sys.stdout.flush()
                 sys.exit(1)
 
         # ADB forward to the emulator
         return_code = subprocess.call(["adb forward tcp:2828 tcp:2828"], shell=True)
         if return_code:
             print "\nFailed to forward adb port to the emulator."
+            sys.stdout.flush()
             sys.exit(1)
 
         # **** Important note ****
@@ -100,6 +110,7 @@ class AWSY(object):
             subprocess.call(["adb shell rm -r /data/local/tmp/memory-reports"], shell=True)
         except:
             pass
+        sys.stdout.flush()
 
     def copy_file_onto_emu(self, file_name):
         # Make sure the file has exe permissions first
@@ -110,10 +121,12 @@ class AWSY(object):
 
         # Copy the given file onto the emulator in /data/local
         print '\nCopying file onto the emulator: %s' %file_name
+        sys.stdout.flush()
         return_code = subprocess.call(["adb push %s /data/local/%s" %(file_name, file_name)], shell=True)
         time.sleep(5)
         if return_code:
             print "\nFailed to copy file onto the emulator."
+            sys.stdout.flush()
             sys.exit(1)
 
     def get_memory_report(self, dmd):
@@ -124,23 +137,29 @@ class AWSY(object):
 
         if dmd:
             print "\nGetting about_memory report with DMD enabled..."
+            sys.stdout.flush()
             return_code = subprocess.call(["$B2G_HOME/get_about_memory.py"], shell=True)
         else:
             print "\nGetting about_memory report without DMD..."
+            sys.stdout.flush()
             return_code = subprocess.call(["$B2G_HOME/tools/get_about_memory.py --no-dmd --no-auto-open --no-gc-cc-log"], shell=True)
         if return_code:
             print "\nFailed to get memory report."
+            sys.stdout.flush()
             sys.exit(1)
+        sys.stdout.flush()
 
     def run_test(self, orangutan_test, cur_iteration, iterations):
         # Run the test one cycle; assuming test and orng already exist on emulator in /data/local/
         print "\nRunning '%s' iteration %d of %d..." %(orangutan_test, cur_iteration, iterations)
-        return_code = subprocess.call(["adb shell /data/local/orangutan/orng /dev/input/event0 /data/local/%s" %orangutan_test], shell=True)
-        if return_code:
-            print "\nFailed to run the orangutan test."
-            sys.exit(1)
         # Have output printed live in jenkins
         sys.stdout.flush()
+        return_code = subprocess.call(["adb shell /data/local/orangutan/orng /dev/input/event0 /data/local/%s" %orangutan_test], shell=True)
+        sys.stdout.flush()
+        if return_code:
+            print "\nFailed to run the orangutan test."
+            sys.stdout.flush()
+            sys.exit(1)
 
     def drive(self, orangutan_test, iterations, sleep, nap_every, nap_time, checkpoint_at, dmd):
         # Actually drive the tests
@@ -161,6 +180,7 @@ class AWSY(object):
     def kill_emulator(self):
         # Tests are finished, kill the emulator
         print "\nKilling the emulator instance..."
+        sys.stdout.flush()
         try:
             returned = os.popen("ps -Af").read()
             process_list = returned.split("\n")
@@ -176,6 +196,8 @@ class AWSY(object):
         except:
             # Failed to kill emulator
             print "\nCouldn't kill the emulator process."
+        sys.stdout.flush()
+
 
 class awsyOptionParser(OptionParser):
     def __init__(self, **kwargs):
@@ -253,6 +275,9 @@ def cli():
     else:
         print "DMD will NOT be included in the memory dumps."
 
+    # Flush so jenkins will display output live
+    sys.stdout.flush()
+
     # Create our test runner
     awsy = AWSY()
 
@@ -293,6 +318,7 @@ def cli():
 
     # Kill the emulator instance
     awsy.kill_emulator()
+
     print "\nFinished."
 
 
