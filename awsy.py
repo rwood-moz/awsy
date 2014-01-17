@@ -70,7 +70,7 @@ class AWSY(object):
         print "\nStarting emulator..."
         sys.stdout.flush()
         # Want emulator to start in own process but don't want this parent to wait for it to finish
-        os.system("gnome-terminal -e $B2G_DISTRO/run-emulator.sh")
+        os.system("gnome-terminal -e $B2G_DISTRO/run-emulator.sh &")
         # Sleep for emulator bootup
         sys.stdout.flush()
         os.system("adb wait-for-device")
