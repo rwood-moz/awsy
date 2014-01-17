@@ -12,8 +12,8 @@ from optparse import OptionParser
 
 class AWSY(object):
 
-    emu_proc = 'emulator64-arm'
-    emu_proc2 = 'emulator-arm'
+    emu_proc = 'out/host/linux-x86/bin/emulator64-arm'
+    emu_proc2 = 'out/host/linux-x86/bin/emulator-arm'
 
     def __init__(self):
         # Ensure $B2G_HOME is set
@@ -72,28 +72,28 @@ class AWSY(object):
         # Want emulator to start in own process but don't want this parent to wait for it to finish
         os.system("gnome-terminal -e $B2G_DISTRO/run-emulator.sh")
         # Sleep for emulator bootup
-        # <TODO> Use adb wait for device instead of a static sleep??
         sys.stdout.flush()
         os.system("adb wait-for-device")
-        print "\nSleeping a couple of minutes, to allow full emulator boot-up..."
+        print "\nSleeping several minutes, to allow full emulator and gaia boot-up..."
         sys.stdout.flush()
-        time.sleep(120)
+        time.sleep(420)
 
         # Verify emulator is running
-        returned = os.popen("ps -Af").read()
-        found = returned.count(self.emu_proc)
-        if found == 0:
-            found = returned.count(self.emu_proc2)
-            if found == 0:
-                print("\nThe B2G emulator failed to start; process not found.")
-                sys.stdout.flush()
-                sys.exit(1)
+        returned = os.popen("adb devices").read()
+        if "emulator" in returned:
+            print "\nEmulator is booted and listed by adb devices"
+        else:
+            print "\nEmulator not found by 'adb devices'."
+            sys.stdout.flush()
+            sleep(5)
+            sys.exit(1)
 
         # ADB forward to the emulator
         return_code = subprocess.call(["adb forward tcp:2828 tcp:2828"], shell=True)
         if return_code:
             print "\nFailed to forward adb port to the emulator."
             sys.stdout.flush()
+            sleep(5)
             sys.exit(1)
 
         # **** Important note ****
