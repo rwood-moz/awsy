@@ -76,7 +76,7 @@ class AWSY(object):
         os.system("adb wait-for-device")
         print "\nSleeping several minutes, to allow full emulator and gaia boot-up..."
         sys.stdout.flush()
-        time.sleep(420)
+        time.sleep(300)
 
         # Verify emulator is running
         returned = os.popen("adb devices").read()
@@ -85,23 +85,16 @@ class AWSY(object):
         else:
             print "\nEmulator not found by 'adb devices'."
             sys.stdout.flush()
-            sleep(5)
             sys.exit(1)
 
+    def adb_forward(self):
         # ADB forward to the emulator
+        print "\nForwarding adb port..."
         return_code = subprocess.call(["adb forward tcp:2828 tcp:2828"], shell=True)
         if return_code:
             print "\nFailed to forward adb port to the emulator."
             sys.stdout.flush()
-            sleep(5)
             sys.exit(1)
-
-        # **** Important note ****
-        # In order for the tests to run, currently the following are prerequisites and assumed
-        # are true at the time of the b2g emulator startup. Set this in the build?!
-        # 1) The FTU app is DISABLED so it won't start on emulator startup
-        # 2) The lock-screen is DISABLED so the emulator screen won't ever lock
-        # 3) The volume warning has already been accepted (fmradio app); maybe change test to click continue
 
     def delete_old_reports_from_emu(self):
         # Ensure there are no memory reports on the emulator (/data/local/tmp) left from a previous run
@@ -129,11 +122,25 @@ class AWSY(object):
             sys.stdout.flush()
             sys.exit(1)
 
-    def get_memory_report(self, dmd):
+    def start_logcat(self):
+        print ("\nStarting adb logcat...")
+        sys.stdout.flush()
+        os.system("gnome-terminal -e adb logcat > logcat.log &")
+        time.sleep(5)
+
+    def get_memory_report(self, dmd, cycles_done):
         # Use the get_about_memory script to grab a memory report
 
         # TEMP due to Bug 910847 DO NOT attempt to get DMD
         dmd = False
+
+        # Name output folder appropriately
+        if cycles_done == 0:
+            folder_name = "about-memory-start"
+        elif cycles_done == 1:
+            folder_name = "about-memory-after-%d-cycle" %cycles_done
+        else:
+            folder_name = "about-memory-after-%d-cycles" %cycles_done
 
         if dmd:
             print "\nGetting about_memory report with DMD enabled..."
@@ -142,16 +149,29 @@ class AWSY(object):
         else:
             print "\nGetting about_memory report without DMD..."
             sys.stdout.flush()
-            return_code = subprocess.call(["$B2G_HOME/tools/get_about_memory.py --no-dmd --no-auto-open --no-gc-cc-log"], shell=True)
+            # Bug 961847: The --dir option doesn't work
+            #cmd = ("$B2G_HOME/tools/get_about_memory.py --no-dmd --no-auto-open --no-gc-cc-log -d %s" %folder_name)
+            cmd = "$B2G_HOME/tools/get_about_memory.py --no-dmd --no-auto-open --no-gc-cc-log"
+            return_code = subprocess.call([cmd], shell=True)
         if return_code:
             print "\nFailed to get memory report."
             sys.stdout.flush()
             sys.exit(1)
         sys.stdout.flush()
 
-    def run_test(self, orangutan_test, cur_iteration, iterations):
+        # Temporary because of 961847; rename the folder
+        try:
+            subprocess.call(["mv about-memory-0 %s"%folder_name], shell=True)
+            print "\nRenamed the about-memory folder to %s" %folder_name
+        except:
+            print "\nFailed to rename about-memory folder"
+            sys.stdout.flush()
+            sys.exit(1)
+        sys.stdout.flush()
+
+    def run_test(self, orangutan_test, cur_cycle, cycles):
         # Run the test one cycle; assuming test and orng already exist on emulator in /data/local/
-        print "\nRunning '%s' iteration %d of %d..." %(orangutan_test, cur_iteration, iterations)
+        print "\nRunning '%s' cycle %d of %d..." %(orangutan_test, cur_cycle, cycles)
         # Have output printed live in jenkins
         sys.stdout.flush()
         return_code = subprocess.call(["adb shell /data/local/orangutan/orng /dev/input/event0 /data/local/%s" %orangutan_test], shell=True)
@@ -161,18 +181,18 @@ class AWSY(object):
             sys.stdout.flush()
             sys.exit(1)
 
-    def drive(self, orangutan_test, iterations, sleep, nap_every, nap_time, checkpoint_at, dmd):
+    def drive(self, orangutan_test, cycles, sleep, nap_every, nap_time, checkpoint_at, dmd):
         # Actually drive the tests
-        for cur_iteration in range(1, iterations + 1):
-            self.run_test(orangutan_test, cur_iteration, iterations)
-            print "\nIteration complete, sleeping for %d seconds..." %sleep
+        for cur_cycle in range(1, cycles + 1):
+            self.run_test(orangutan_test, cur_cycle, cycles)
+            print "\nCycle complete, sleeping for %d seconds..." %sleep
             sys.stdout.flush()
             time.sleep(sleep)
-            # Checkpoint time?
-            if ((cur_iteration % checkpoint_at) == 0) or cur_iteration == iterations:
-                self.get_memory_report(dmd)
+            # Get memory report after 1 cycle, then as specified, then after done
+            if ((cur_cycle % checkpoint_at) == 0) or (cur_cycle == 2) or (cur_cycle == cycles):
+                self.get_memory_report(dmd, cur_cycle)
             # Nap time?
-            if (cur_iteration % nap_every == 0):
+            if (cur_cycle % nap_every == 0):
                 print "\nTaking extended nap for %d seconds..." %nap_time
                 sys.stdout.flush()
                 time.sleep(nap_time)
@@ -202,27 +222,32 @@ class AWSY(object):
 class awsyOptionParser(OptionParser):
     def __init__(self, **kwargs):
         OptionParser.__init__(self, **kwargs)
-        self.add_option('--iterations',
+        self.add_option('--emulator-running',
+                        action='store_true',
+                        dest='emu_running',
+                        default=False,
+                        help='Emulator is already running, connect to existing instance')
+        self.add_option('--cycles',
                         action='store',
-                        dest='iterations',
+                        dest='cycles',
                         default=1,
                         metavar='int',
                         type='int',
-                        help='Number of iterations to run the orangutan test script')
+                        help='Number of cycles to run the orangutan test script')
         self.add_option('--sleep-between',
                         action='store',
                         dest='sleep_between',
                         default=30,
                         metavar='int',
                         type='int',
-                        help='Sleep for x seconds between each iteration')
+                        help='Sleep for x seconds between each cycle')
         self.add_option('--nap-every',
                         action='store',
                         dest='nap_after',
                         default=10,
                         metavar='int',
                         type='int',
-                        help='Take an extended nap after every x iterations')
+                        help='Take an extended nap after every x cycles')
         self.add_option('--nap-time',
                         action='store',
                         dest='nap_time',
@@ -236,12 +261,17 @@ class awsyOptionParser(OptionParser):
                         default=10,
                         metavar='int',
                         type='int',
-                        help='Get about_memory dumps after every x iterations')
+                        help='Get about_memory dumps after every x cycles')
         self.add_option('--dmd',
                         action='store_true',
                         dest='dmd',
                         default=False,
                         help='Include DMD when get memory dumps')
+        self.add_option('--ftu',
+                        action='store_true',
+                        dest='ftu',
+                        default=False,
+                        help='Run FTU utility on first emulator bootup')
 
 
 def cli():
@@ -262,18 +292,26 @@ def cli():
         sys.exit(1)
 
     print "Test to run: %s" %test_name
-    print "Iterations: %d" %options.iterations
-    print "Sleep for %d seconds between iterations." %options.sleep_between
-    if options.nap_after <= options.iterations:
-        print "After every %d iterations take a nap for %d seconds." %(options.nap_after, options.nap_time)
-    if options.checkpoint_every <= options.iterations:
-        print "Get extra about_memory dumps after every %d iterations." %options.checkpoint_every
+    print "Cycles: %d" %options.cycles
+    print "Sleep for %d seconds between cycles." %options.sleep_between
+    if options.nap_after <= options.cycles:
+        print "After every %d cycles take a nap for %d seconds." %(options.nap_after, options.nap_time)
+    if options.checkpoint_every <= options.cycles:
+        print "Get extra about_memory dumps after every %d cycles." %options.checkpoint_every
     else:
         print "About_memory dumps will be retrieved at start and at the finish."
     if options.dmd:
         print "DMD will be included in the memory dumps."
     else:
         print "DMD will NOT be included in the memory dumps."
+    if options.emu_running:
+        print "The emulator is already running, will connect to existing instance."
+    else:
+        print "The emulator is not already running so will be started."
+    if options.ftu:
+        print "FTU utility script will run first."
+    else:
+        print "NOT running the FTU utility script."
 
     # Flush so jenkins will display output live
     sys.stdout.flush()
@@ -284,8 +322,12 @@ def cli():
     # Begin by backuping up any existing about_memory reports
     awsy.backup_existing_reports()
 
-    # Start up the emulator
-    awsy.start_emu()
+    # Start up the emulator if it is not already running
+    if not options.emu_running:
+        awsy.start_emu()
+
+    # Ensure the emulator port is fw
+    awsy.adb_forward()
 
     # Ensure no old memory reports exist on the emulator
     awsy.delete_old_reports_from_emu()
@@ -294,22 +336,34 @@ def cli():
     awsy.copy_file_onto_emu('orangutan/orng')
 
     # Copy the FTU utility script onto the emulator
-    awsy.copy_file_onto_emu('tests/navigateftu.dat')
+    if options.ftu:
+        awsy.copy_file_onto_emu('tests/navigateftu.dat')
 
     # Copy the orangutan test script onto the emulator
     awsy.copy_file_onto_emu(test_name)
 
     # First time the emulator starts up there is the FTU app;
     # run utility script to navigate and close the FTU
-    awsy.run_test('tests/navigateftu.dat', 1, 1)
-    time.sleep(5)
+    if options.ftu:
+        awsy.run_test('tests/navigateftu.dat', 1, 1)
+        time.sleep(10)
+
+    # Restart the emulator now that the FTU is gone and settings are set
+    awsy.kill_emulator()
+    time.sleep(30)
+    awsy.start_emu()
+
+    # Start adb logcat
+    awsy.start_logcat()
 
     # Get the starting about_memory
-    awsy.get_memory_report(options.dmd)
+    awsy.get_memory_report(options.dmd, 0)
 
     # Actually run the test cycle(s), and get_about_memory
+    # NOTE: The gaia lock screen MUST BE disabled, otherwise the emulator
+    # will lock during sleeps and while getting the memory reports
     awsy.drive(test_name,
-               options.iterations,
+               options.cycles,
                options.sleep_between,
                options.nap_after,
                options.nap_time,
