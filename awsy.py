@@ -136,7 +136,7 @@ class AWSY(object):
 
         # Name output folder appropriately
         if cycles_done == 0:
-            folder_name = "about-memory-start"
+            folder_name = "about-memory-start-idle"
         elif cycles_done == 1:
             folder_name = "about-memory-after-%d-cycle" %cycles_done
         else:
