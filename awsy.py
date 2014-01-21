@@ -189,7 +189,7 @@ class AWSY(object):
             sys.stdout.flush()
             time.sleep(sleep)
             # Get memory report after 1 cycle, then as specified, then after done
-            if ((cur_cycle % checkpoint_at) == 0) or (cur_cycle == 2) or (cur_cycle == cycles):
+            if ((cur_cycle % checkpoint_at) == 0) or (cur_cycle == 1) or (cur_cycle == cycles):
                 self.get_memory_report(dmd, cur_cycle)
             # Nap time?
             if (cur_cycle % nap_every == 0):
