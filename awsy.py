@@ -130,6 +130,8 @@ class AWSY(object):
 
     def get_memory_report(self, dmd, cycles_done):
         # Use the get_about_memory script to grab a memory report
+        retries = 3
+        return_code = 1
 
         # TEMP due to Bug 910847 DO NOT attempt to get DMD
         dmd = False
@@ -142,22 +144,28 @@ class AWSY(object):
         else:
             folder_name = "about-memory-after-%d-cycles" %cycles_done
 
-        if dmd:
-            print "\nGetting about_memory report with DMD enabled..."
+        while return_code:
+            if dmd:
+                print "\nGetting about_memory report with DMD enabled..."
+                sys.stdout.flush()
+                return_code = subprocess.call(["$B2G_HOME/get_about_memory.py"], shell=True)
+            else:
+                print "\nGetting about_memory report without DMD or gc-cc..."
+                sys.stdout.flush()
+                # Bug 961847: The --dir option doesn't work
+                #cmd = ("$B2G_HOME/tools/get_about_memory.py --no-dmd --no-auto-open --no-gc-cc-log -d %s" %folder_name)
+                cmd = "$B2G_HOME/tools/get_about_memory.py --no-dmd --no-auto-open --no-gc-cc-log"
+                return_code = subprocess.call([cmd], shell=True)
+            if return_code:
+                print "\nFailed to get memory report."
+                if retries:
+                    print "\nRetries remaining: %d" %retries
+                    sys.stdout.flush()
+                else:
+                    print ("\nFailed to get memory report, retried %d times." %retries)
+                    sys.stdout.flush()
+                    sys.exit(1)
             sys.stdout.flush()
-            return_code = subprocess.call(["$B2G_HOME/get_about_memory.py"], shell=True)
-        else:
-            print "\nGetting about_memory report without DMD..."
-            sys.stdout.flush()
-            # Bug 961847: The --dir option doesn't work
-            #cmd = ("$B2G_HOME/tools/get_about_memory.py --no-dmd --no-auto-open --no-gc-cc-log -d %s" %folder_name)
-            cmd = "$B2G_HOME/tools/get_about_memory.py --no-dmd --no-auto-open --no-gc-cc-log"
-            return_code = subprocess.call([cmd], shell=True)
-        if return_code:
-            print "\nFailed to get memory report."
-            sys.stdout.flush()
-            sys.exit(1)
-        sys.stdout.flush()
 
         # Temporary because of 961847; rename the folder
         try:
