@@ -319,7 +319,7 @@ def cli():
     # Create our test runner
     awsy = AWSY()
 
-    # Begin by backuping up any existing about_memory reports
+    # Begin by backing up any existing about_memory reports
     awsy.backup_existing_reports()
 
     # Start up the emulator if it is not already running
@@ -347,11 +347,6 @@ def cli():
     if options.ftu:
         awsy.run_test('tests/navigateftu.dat', 1, 1)
         time.sleep(10)
-
-    # Restart the emulator now that the FTU is gone and settings are set
-    awsy.kill_emulator()
-    time.sleep(30)
-    awsy.start_emu()
 
     # Start adb logcat
     awsy.start_logcat()
