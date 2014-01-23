@@ -160,6 +160,7 @@ class AWSY(object):
                 print "\nFailed to get memory report."
                 if retries:
                     print "\nRetries remaining: %d" %retries
+                    retries-=1
                     sys.stdout.flush()
                 else:
                     print ("\nFailed to get memory report, retried %d times." %retries)
