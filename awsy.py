@@ -21,34 +21,29 @@ class AWSY(object):
             self.b2g_home = os.environ["B2G_HOME"]
             print "\n$B2G_HOME points to: %s" %self.b2g_home
         except:
-            print "\n$B2G_HOME env var must be set to point to the B2G folder.\n"
-            sys.exit(1)
+            self.exit_with_error("$B2G_HOME env var must be set to point to the B2G folder.")
         # Ensure get_about_memory tool script exists
         if not os.path.exists("%s/tools/get_about_memory.py" %self.b2g_home):
-            print("\nThe get_about_memory.py script doesn't exist in $B2G_HOME/tools.\n")
-            sys.exit(1)
+            self.exit_with_error("The get_about_memory.py script doesn't exist in $B2G_HOME/tools.")
         # Ensure $AWSY_ORANG is set
         try:
             self.awsy_orang = os.environ["AWSY_ORANG"]
             print "\n$AWSY_ORANG points to: %s" %self.awsy_orang
         except:
-            print "\n$AWSY_ORANG env var must be set to point to the orangutan binary.\n"
-            sys.exit(1)
+            self.exit_with_error("$AWSY_ORANG env var must be set to point to the orangutan binary.")
+
         # Ensure orang binary exists
         if not os.path.exists("%s/orng" %self.awsy_orang):
-            print("\nThe orangutan binary doesn't exist at the $AWSY_ORANG location.\n")
-            sys.exit(1)
+            self.exit_with_error("The orangutan binary doesn't exist at the $AWSY_ORANG location.")
         # Ensure $B2G_DISTRO is set
         try:
             self.b2g_distro = os.environ["B2G_DISTRO"]
             print "\n$B2G_DISTRO points to: %s" %self.b2g_distro
         except:
-            print "\n$B2G_DISTRO env var must be set to point to the emulator.\n"
-            sys.exit(1)
+            self.exit_with_error("$B2G_DISTRO env var must be set to point to the emulator.")
         # Ensure run-emulator script exist
         if not os.path.exists("%s/run-emulator.sh" %self.b2g_distro):
-            print("\nThe emulator doesn't exist at the $B2G_DISTRO location.\n")
-            sys.exit(1)
+            self.exit_with_error("The emulator doesn't exist at the $B2G_DISTRO location.")
         # Have output printed live in jenkins
         sys.stdout.flush()
 
@@ -83,18 +78,14 @@ class AWSY(object):
         if "emulator" in returned:
             print "\nEmulator is booted and listed by adb devices"
         else:
-            print "\nEmulator not found by 'adb devices'."
-            sys.stdout.flush()
-            sys.exit(1)
+            self.exit_with_error("Adb doesn't see the emulator.")
 
     def adb_forward(self):
         # ADB forward to the emulator
         print "\nForwarding adb port..."
         return_code = subprocess.call(["adb forward tcp:2828 tcp:2828"], shell=True)
         if return_code:
-            print "\nFailed to forward adb port to the emulator."
-            sys.stdout.flush()
-            sys.exit(1)
+            self.exit_with_error("Failed to forward adb port to the emulator.")
 
     def delete_old_reports_from_emu(self):
         # Ensure there are no memory reports on the emulator (/data/local/tmp) left from a previous run
@@ -118,9 +109,7 @@ class AWSY(object):
         return_code = subprocess.call(["adb push %s /data/local/%s" %(file_name, file_name)], shell=True)
         time.sleep(5)
         if return_code:
-            print "\nFailed to copy file onto the emulator."
-            sys.stdout.flush()
-            sys.exit(1)
+            self.exit_with_error("Failed to copy file onto the emulator.")
 
     def start_logcat(self):
         print ("\nStarting adb logcat...")
@@ -163,9 +152,7 @@ class AWSY(object):
                     retries-=1
                     sys.stdout.flush()
                 else:
-                    print ("\nFailed to get memory report, retried %d times." %retries)
-                    sys.stdout.flush()
-                    sys.exit(1)
+                    self.exit_with_error("Failed to get memory report after several attempts.")
             sys.stdout.flush()
 
         # Temporary because of 961847; rename the folder
@@ -186,9 +173,7 @@ class AWSY(object):
         return_code = subprocess.call(["adb shell /data/local/orangutan/orng /dev/input/event0 /data/local/%s" %orangutan_test], shell=True)
         sys.stdout.flush()
         if return_code:
-            print "\nFailed to run the orangutan test."
-            sys.stdout.flush()
-            sys.exit(1)
+            self.exit_with_error("Failed to run the orangutan test.")
 
     def drive(self, orangutan_test, cycles, sleep, nap_every, nap_time, checkpoint_at, dmd):
         # Actually drive the tests
@@ -207,25 +192,29 @@ class AWSY(object):
                 time.sleep(nap_time)
 
     def kill_emulator(self):
-        # Tests are finished, kill the emulator
-        print "\nKilling the emulator instance..."
-        sys.stdout.flush()
+        # Check if the emulator is running, if so kill it
         try:
             returned = os.popen("ps -Af").read()
             process_list = returned.split("\n")
             for i, s in enumerate(process_list):
-                if self.emu_proc in s:
-                    proc_details = process_list[i].split()
-                    emu_pid = int(proc_details[1])
-                    os.kill(emu_pid, 9)
-                elif self.emu_proc2 in s:
+                if (self.emu_proc in s) or (self.emu_proc2 in s):
+                    print "\nEmulator is running, killing it..."
+                    sys.stdout.flush()
                     proc_details = process_list[i].split()
                     emu_pid = int(proc_details[1])
                     os.kill(emu_pid, 9)
         except:
             # Failed to kill emulator
-            print "\nCouldn't kill the emulator process."
+            print "\nCouldn't find or kill the emulator process."
         sys.stdout.flush()
+
+    def exit_with_error(self, error_text):
+        # Ran into an error, and cannot continue the test
+        print "\n%s\n" %error_text
+        sys.stdout.flush()
+        # Check if the emulator is running, if so kill it
+        self.kill_emulator()
+        sys.exit(1)
 
 
 class awsyOptionParser(OptionParser):
