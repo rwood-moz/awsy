@@ -346,9 +346,6 @@ def cli():
         awsy.run_test('tests/navigateftu.dat', 1, 1)
         time.sleep(10)
 
-    # Start adb logcat
-    awsy.start_logcat()
-
     # Get the starting about_memory
     awsy.get_memory_report(options.dmd, 0)
 
